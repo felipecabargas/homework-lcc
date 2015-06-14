@@ -37,7 +37,7 @@ void joinWords(string filename1, string filename2);
 void difference(string filename1, string filename2);
 void concatWords(string filename1, string filename2);
 void moreVowels(string filename1, string filename2);
-void bonusTrack(string filename);
+void bonusTrack(string filename1, string filename2);
 
 //Menu function
 void optionSwitch(int option);
@@ -120,6 +120,9 @@ void optionSwitch(int option){
 		break;
 		case 6:
 			cout << "Ejecutando funcion 6........." << endl;
+			bonusTrack(filename1, filename2);
+			cout << "Puedes encontrar un resumen de tu juego en bonusTrack.txt" << endl;
+			cout << "Selecciona otra opcion o ingresa 0 para terminar." << endl;
 			cin >> option;
 		break;
 		default:
@@ -299,6 +302,50 @@ void moreVowels(string filename1, string filename2){
 	outputfile.close();
 }
 
+void bonusTrack(string filename1, string filename2){
+	ifstream wfile;
+	ofstream outputfile;
+	char c;
+	int i, aux, good=0, tryouts=6;
+	string word;
+	string outputfilename = "bonusTrack.txt";
+
+	outputfile.open(outputfilename);
+
+	moreVowels(filename1, filename2);
+	wfile.open("moreVowels.txt");
+	wfile >> word;
+
+	cout << "BIENVENIDO AL JUEGO DEL AHORCADO" << endl;
+	cout << "================================" << endl;
+
+	while((tryouts>0) && (good!=word.length())){
+
+		cout << "Ingrese una letra: " << endl;
+		cin >> c;
+		aux = good;
+
+		for(i=0;i<word.length();i++){
+			if(word[i] == c){
+				good++;
+				outputfile << word[i];
+			} else {
+				outputfile << "-";
+			}
+		}
+
+		if(good == aux){
+			tryouts--;
+			cout << "Respuesta equivocada, solo te quedan: " << tryouts << " intentos."
+		}
+
+		outputfile << "\n";
+	}
+
+
+	wfile.close();
+	outputfile.close();
+}
 
 //Aux Functions
 int isPresent(string word, string filename){
