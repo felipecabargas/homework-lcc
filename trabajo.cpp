@@ -20,6 +20,7 @@
 Version del Compilador:         GNU Make 3.81
 Version del Sistema Operativo:  Mac OS X 10.10.4-beta
 Version del Editor de Texto:    TextMate 2.10-beta
+
 */
 
 #include <iostream>
@@ -35,7 +36,7 @@ void intersection(string filename1, string filename2);
 void joinWords(string filename1, string filename2);
 void difference(string filename1, string filename2);
 void concatWords(string filename1, string filename2);
-void moreVocals(string filename);
+void moreVowels(string filename1, string filename2);
 void bonusTrack(string filename);
 
 //Menu function
@@ -45,8 +46,7 @@ void optionSwitch(int option);
 int isPresent(string word, string filename);
 int startsWithConsonant(string word);
 int endsWithVowel(string word);
-int compareWords(string word1, string word2);
-
+int vowels(string word);
 
 int main(){
 	int option;
@@ -61,7 +61,7 @@ int main(){
 	cout << "\t (3) Obtener diferencia de ambos archivos" << endl;
 	cout << "\t (4) Obtener concatenacion de palabras de ambos archivos" << endl;
 	cout << "\t (5) Obtener palabra con mas vocales diferentes dentro de ambos archivos" << endl;
-	cout << "\t (6) BONUS TRACK [NSFW]" << endl;
+	cout << "\t (6) BONUS TRACK" << endl;
 
 	cout << endl << "====================================================================================\n" << endl;
 
@@ -113,6 +113,9 @@ void optionSwitch(int option){
 		break;
 		case 5:
 			cout << "Ejecutando funcion 5........." << endl;
+			moreVowels(filename1, filename2);
+			cout << "Ejecucion finalizada, tu archivo de salida es moreVowels.txt" << endl;
+			cout << "Selecciona otra opcion o ingresa 0 para terminar." << endl;
 			cin >> option;
 		break;
 		case 6:
@@ -230,7 +233,7 @@ void concatWords(string filename1, string filename2){
 	while(file1 >> word){
 		if(startsWithConsonant(word)){
 			while(file2 >> word2){
-				if(endsWithVowel(word)){
+				if(endsWithVowel(word2)){
 					outputfile << word << word2 << "\n";
 				}
 			}
@@ -242,6 +245,62 @@ void concatWords(string filename1, string filename2){
 	outputfile.close();
 }
 
+void moreVowels(string filename1, string filename2){
+	int moreV = 0;
+	int fileN; //stores number of the file that contains that word
+	ifstream file1, file2;
+	ofstream outputfile;
+	string word;
+	string outputfilename = "moreVowels.txt";
+
+	file1.open(filename1);
+	file2.open(filename2);
+	outputfile.open(outputfilename);
+
+
+	/* FIND GREATEST NUMBER OF VOWELS INSIDE FIRST FILE'S WORDS*/
+	while(file1 >> word){
+		if(vowels(word) > moreV){
+			moreV = vowels(word);
+			fileN = 1;
+		}
+	}
+	/* FIND GREATEST NUMBER OF VOWELS INSIDE SECOND FILE'S WORDS*/
+	while(file2 >> word){
+		if(vowels(word) > moreV){
+			moreV = vowels(word);
+			fileN = 2;
+		}
+	}
+
+	file1.close();
+	file2.close();
+
+	/* GETTING THE WORD */
+	cout << "La palabra con mas vocales se encuentra en el archivo " << fileN << " y contiene un total de " << moreV << " vocales." << endl;
+
+	file1.open(filename1);
+	file2.open(filename2);
+
+	if(fileN == 1){
+		while(file1 >> word){
+			if(vowels(word) == moreV){
+				outputfile << word << "\n";
+			}
+		}
+	} else {
+		while(file2 >> word){
+			if(vowels(word) == moreV){
+				outputfile << word << "\n";
+			}
+		}
+	}
+
+	outputfile.close();
+}
+
+
+//Aux Functions
 int isPresent(string word, string filename){
 	ifstream checkfile;
 	string wordcmp;
@@ -282,4 +341,21 @@ int endsWithVowel(string word){
 		}
 	}
 	return 0;
+}
+
+int vowels(string word){
+	int i, j, c;
+	char vowels[5] = {'a','e','i','o','u'};
+
+	c = 0;
+
+	for(i=0;i<word.length();i++){
+		for(j=0;j<5;j++){
+			if(word[i]==vowels[j]){
+				c++;
+			}
+		}
+	}
+
+	return c;
 }
